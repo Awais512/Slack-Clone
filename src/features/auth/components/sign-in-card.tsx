@@ -12,14 +12,21 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SignInFlow } from "../types";
 import { useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface Props {
   setState: (state: SignInFlow) => void;
 }
 
 export const SignInCard = ({ setState }: Props) => {
+  const { signIn } = useAuthActions();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleProviderSignIn = (value: "github" | "google") => {
+    signIn(value);
+  };
 
   return (
     <Card className="w-full h-full p-8">
@@ -66,13 +73,13 @@ export const SignInCard = ({ setState }: Props) => {
           </Button>
           <Button
             disabled={false}
-            onClick={() => {}}
+            onClick={() => handleProviderSignIn("github")}
             variant="outline"
             size="lg"
             className="w-full relative"
           >
             <FaGithub className="size-5 absolute top-3 left-2.5" /> Continue
-            with google
+            with github
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
