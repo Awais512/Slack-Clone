@@ -2,6 +2,7 @@
 
 import { useGetChannel } from "@/features/channels/api/use-get-channel";
 import { useCreateChannelModal } from "@/features/channels/store/use-create-channel";
+import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { Loader, TriangleAlert } from "lucide-react";
@@ -14,6 +15,10 @@ const WorkspaceIdPage = () => {
 
   const [open, setOpen] = useCreateChannelModal();
 
+  const { data: member, isLoading: memberLoading } = useCurrentMember({
+    workspaceId,
+  });
+
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({
     id: workspaceId,
   });
@@ -22,17 +27,28 @@ const WorkspaceIdPage = () => {
   });
 
   const channelId = useMemo(() => channels?.[0]?._id, [channels]);
+  const isAdmin = useMemo(() => member?.role === "admin", [member?.role]);
 
   useEffect(() => {
-    if (workspaceLoading || channelsLoading || !workspace) return;
+    if (
+      workspaceLoading ||
+      channelsLoading ||
+      memberLoading ||
+      !member ||
+      !workspace
+    )
+      return;
 
     if (channelId) {
       router.push(`/workspace/${workspaceId}/channel/${channelId}`);
-    } else if (!open) {
+    } else if (!open && isAdmin) {
       setOpen(true);
     }
   }, [
+    member,
+    memberLoading,
     channelId,
+    isAdmin,
     workspaceLoading,
     channelsLoading,
     workspace,
@@ -59,7 +75,12 @@ const WorkspaceIdPage = () => {
     );
   }
 
-  return null;
+  return (
+    <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
+      <TriangleAlert className="text-muted-foreground size-6" />
+      <span>Channel not found</span>
+    </div>
+  );
 };
 
 export default WorkspaceIdPage;
