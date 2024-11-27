@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetChannel } from "@/features/channels/api/use-get-channel";
+import { useGetChannels } from "@/features/channels/api/use-get-channels";
 import { useCreateChannelModal } from "@/features/channels/store/use-create-channel";
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
@@ -22,7 +22,7 @@ const WorkspaceIdPage = () => {
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({
     id: workspaceId,
   });
-  const { data: channels, isLoading: channelsLoading } = useGetChannel({
+  const { data: channels, isLoading: channelsLoading } = useGetChannels({
     workspaceId,
   });
 
@@ -58,7 +58,7 @@ const WorkspaceIdPage = () => {
     setOpen,
   ]);
 
-  if (workspaceLoading || channelsLoading) {
+  if (workspaceLoading || channelsLoading || memberLoading) {
     return (
       <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
         <Loader className="animate-spin text-muted-foreground size-6" />
@@ -66,7 +66,7 @@ const WorkspaceIdPage = () => {
     );
   }
 
-  if (!workspace) {
+  if (!workspace || !member) {
     return (
       <div className="h-full flex-1 flex items-center justify-center flex-col gap-2">
         <TriangleAlert className="text-muted-foreground size-6" />

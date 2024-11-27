@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { WorkspaceHeader } from "./workspace-header";
 import SidebarItem from "./sidebar-item";
-import { useGetChannel } from "@/features/channels/api/use-get-channel";
+import { useGetChannels } from "@/features/channels/api/use-get-channels";
 import { WorkspaceSection } from "./workspace-section";
 import { useGetMember } from "@/features/members/api/use-get-members";
 import { UserItem } from "./user-item";
@@ -29,7 +29,7 @@ export const WorkspaceSidebar = () => {
     id: workspaceId,
   });
 
-  const { data: channels, isLoading: isChannelLoading } = useGetChannel({
+  const { data: channels, isLoading: isChannelLoading } = useGetChannels({
     workspaceId,
   });
 
