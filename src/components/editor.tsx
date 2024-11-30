@@ -161,7 +161,12 @@ const Editor = ({
         onChange={(e) => setImage(e.target.files![0])}
         className="hidden"
       />
-      <div className="flex-col flex border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
+      <div
+        className={cn(
+          `flex-col flex border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white`,
+          disabled && "opacity-50"
+        )}
+      >
         <div ref={containerRef} className="h-full ql-custom" />
         {!!image && (
           <div className="p-2">
