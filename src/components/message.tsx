@@ -13,6 +13,7 @@ import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
 import { Reactions } from "./reactions";
+import { usePanel } from "@/hooks/use-panel";
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -66,6 +67,7 @@ export const Message = ({
 }: Props) => {
   const avatarFallback = authorName.charAt(0).toUpperCase();
 
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "This can not be undone."
@@ -108,11 +110,12 @@ export const Message = ({
       {
         onSuccess: () => {
           toast.success("Message deleted");
-          // setEditingId(null);
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error("Failed to delete message");
-          // setEditingId(null);
         },
       }
     );
@@ -176,7 +179,7 @@ export const Message = ({
               isPending={isPending}
               hideThreadButton={hideThreadButton}
               handleEdit={() => setEditingId(id)}
-              handleThread={() => {}}
+              handleThread={() => onOpenMessage(id)}
               handleDelete={handleRemoveMessage}
               handleReaction={handleReaction}
             />
@@ -246,7 +249,7 @@ export const Message = ({
             isPending={isPending}
             hideThreadButton={hideThreadButton}
             handleEdit={() => setEditingId(id)}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id)}
             handleDelete={handleRemoveMessage}
             handleReaction={handleReaction}
           />
